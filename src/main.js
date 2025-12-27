@@ -14,7 +14,8 @@ try {
 	await Promise.all([awaitDom(), document.fonts.ready]);
 
 	// Init App
-	window.APP = new App();
+	const domEl = document.getElementById('app');
+	window.APP = new App({ dom: domEl });
 } catch (err) {
 	console.error(err);
 }

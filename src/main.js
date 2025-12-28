@@ -9,13 +9,25 @@ const awaitDom = () => {
 	});
 };
 
+let appInstance = null;
+
 try {
 	// Wait for resources
 	await Promise.all([awaitDom(), document.fonts.ready]);
 
 	// Init App
+	if (appInstance) appInstance.destroy();
+
 	const dom = document.getElementById('app');
-	window.APP = new App({ dom });
+	appInstance = new App({ dom });
+
+	window.APP = appInstance;
 } catch (err) {
-	console.error(err);
+	console.error('App Initialisation Failed :: ', err);
+}
+
+if (import.meta.hot) {
+	import.meta.hot.dispose(() => {
+		if (appInstance) appInstance.destroy();
+	});
 }

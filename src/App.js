@@ -124,10 +124,32 @@ export default class App {
 
 		this.box.rotation.y = this.time;
 
-		requestAnimationFrame(this.tick);
+		this.rafId = requestAnimationFrame(this.tick);
 	}
 
 	eventListeners() {
 		window.addEventListener('resize', this.resize);
+	}
+
+	destroy() {
+		window.removeEventListener('resize', this.resize);
+
+		this.scene.traverse((child) => {
+			if (child instanceof Mesh) {
+				child.geometry.dispose();
+
+				if (Array.isArray(child.material)) {
+					child.material.forEach((mat) => mat.dispose());
+				} else {
+					child.material.dispose();
+				}
+			}
+		});
+
+		this.renderer.dispose();
+
+		cancelAnimationFrame(this.rafId);
+
+		console.log('Scene Destroyed 💥');
 	}
 }
